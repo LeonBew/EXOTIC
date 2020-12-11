@@ -17,19 +17,24 @@ The objective of this pipeline is to help you reduce your images of your transit
 
 The easiest way to install exotic is with pip: 
 
-`pip install exotic`
+`$ pip install exotic`
 
 **Depending on your version of python you may need to use a different pip command (e.g. pip3).** If you're having trouble installing exotic from pip, please see our documentation for additional installation instructions including setting up dependencies for [Mac](https://github.com/rzellem/EXOTIC/raw/main/Documentation/English/EXOTIC-Installation-Instructions-for-Mac-Users.pdf), [Windows](https://github.com/rzellem/EXOTIC/raw/main/Documentation/English/EXOTIC-Installation-Instructions-for-Windows-Users.pdf) and [Linux](exotic_installation_linux.sh)
 
-## Running exotic
+## Examples 
+- [Google Collab](https://colab.research.google.com/drive/1W1vrgEp9_IjEN16WFxmopLDYvHeYfxpw?usp=sharing)
+- [Jupyter Notebook](examples/Exotic_Notebook.ipynb)
+- Command Line: `$ exotic`
 
-`python exotic/exotic.py`
+or if you have an inits file already:
 
-FITS files with a modern header including parameters for UT time, exposure time, WCS coordinations (optional) are required. Download a sample dataset consisting of 142 `fits` files taken by a 6” telescope of the exoplanet HAT-P-32 b (VMag = 11.44) observed on December 20, 2017. The telescope used to collect this dataset is part of the MicroObservatory Robotic Telescope Network operated by the Harvard-Smithsonian Center for Astrophysics.
+`$ exotic -i inits.json`
+
+FITS files with a modern header including parameters for UT time, exposure time, WCS coordinations (optional) are required for EXOTIC. We provide a sample dataset consisting of 142 `fits` files taken by a 6” telescope of the exoplanet HAT-P-32 b (VMag = 11.44) observed on December 20, 2017. The telescope used to collect this dataset is part of the MicroObservatory Robotic Telescope Network operated by the Harvard-Smithsonian Center for Astrophysics.
 
 [Sample Data](https://github.com/rzellem/EXOTIC_sampledata)
 
-A resulting lightcurve from the sample dataset is shown below:
+A lightcurve from the sample dataset is shown below:
 
 ![Lightcurve graph showing relative flux versus phase with error bars and interpolated curve.](https://github.com/rzellem/EXOTIC/raw/main/Documentation/Images/HAT-P-32bExample.png)
 
@@ -57,13 +62,12 @@ Get EXOTIC up and running faster with a json file. Please see the included file 
 
 ```json
 {
-    "user_info": [
-        {
-            "Directory with FITS files": "../sample-data/HatP32Dec202017",
-            "Directory to Save Plots": "../output",
-            "Directory of Flats": "n",
-            "Directory of Darks": "n",
-            "Directory of Biases": "n",
+    "user_info": {
+            "Directory with FITS files": "sample-data/HatP32Dec202017",
+            "Directory to Save Plots": "sample-data/",
+            "Directory of Flats": null,
+            "Directory of Darks": null,
+            "Directory of Biases": null,
 
             "AAVSO Observer Code (N/A if none)": "RTZ",
             "Secondary Observer Codes (N/A if none)": "N/A",
@@ -72,21 +76,21 @@ Get EXOTIC up and running faster with a json file. Please see the included file 
             "Obs. Latitude": "+31.68",
             "Obs. Longitude": "-110.88",
             "Obs. Elevation (meters)": 2616,
-
             "Camera Type (CCD or DSLR)": "CCD",
             "Pixel Binning": "1x1",
             "Filter Name (aavso.org/filters)": "V",
             "Observing Notes": "Weather, seeing was nice.",
+
+            "Plate Solution? (y/n)": "n",
+
             "Target Star X & Y Pixel": [424, 286],
             "Comparison Star(s) X & Y Pixel": [[465, 183], [512, 263]]
-        }
-    ],
-    "planetary_parameters": [
-        {
-            "Target Star RA (hh:mm:ss)": "02:04:10",
-            "Target Star Dec (+/-hh:mm:ss)": "+46:41:23",
-            "Planet's Name": "HAT-P-32 b",
-            "Host Star's Name": "HAT-P-32",
+    },
+    "planetary_parameters": {
+            "Target Star RA": "02:04:10",
+            "Target Star Dec": "+46:41:23",
+            "Planet Name": "HAT-P-32 b",
+            "Host Star Name": "HAT-P-32",
             "Orbital Period (days)": 2.1500082,
             "Orbital Period Uncertainty": 1.3e-07,
             "Published Mid-Transit Time (BJD-UTC)": 2455867.402743,
@@ -107,8 +111,12 @@ Get EXOTIC up and running faster with a json file. Please see the included file 
             "Star Surface Gravity (log(g))": 4.22,
             "Star Surface Gravity (+) Uncertainty": 0.04,
             "Star Surface Gravity (-) Uncertainty": -0.04
-        }
-    ]
+    },
+    "optional_info": {
+            "Pixel Scale (Ex: 5.21 arcsecs/pixel)": null,
+            "Filter Minimum Wavelength (nm)": null,
+            "Filter Maximum Wavelength (nm)": null
+    }
 }
 ```
 
@@ -121,11 +129,19 @@ Get EXOTIC up and running faster with a json file. Please see the included file 
 
 - Resolve targets with [NASA Exoplanet Archive](https://exoplanetarchive.ipac.caltech.edu/) + retrieve light curve priors
 
+- Hot Pixel Masking
+
+![](Documentation/Images/Hot_pixel_mask.png)
+
 - Aperture Photometry with PSF centroiding (2D Gaussian + rotation)
 
 ![HAT-P-32 b Centroid Position Graph, X-Pixel versus Time in Julian Date.](https://github.com/rzellem/EXOTIC/raw/main/Documentation/Images/centroids.png)
 
-- Multiple comparison star + aperture size choice optimization
+- Stellar masking in background estimate
+
+![](Documentation/Images/Background_Estimate.png)
+
+- Multiple comparison star + aperture size optimization
 
 - Non-linear 4 parameter limb darkening with [LDTK](https://github.com/hpparvi/ldtk)
 
@@ -137,7 +153,7 @@ Get EXOTIC up and running faster with a json file. Please see the included file 
 
 ## Contributing to EXOTIC
 
-Please create an issue and track the changes with a new branch that has the same name as the issue number
+EXOTIC is an open source project that welcomes contributions. Please fork the repository and submit a pull request to the develop branch for your addition(s) to be reviewed. 
 
 ## Citation
 If you use any of these algorithms in your work, please cite our 2020 paper: [Zellem, Pearson, Blaser, et al. 2020](https://ui.adsabs.harvard.edu/abs/2020arXiv200309046Z/abstract) 
@@ -145,3 +161,6 @@ If you use any of these algorithms in your work, please cite our 2020 paper: [Ze
 ![https://exoplanets.nasa.gov/exoplanet-watch/about-exoplanet-watch/](https://github.com/rzellem/EXOTIC/raw/main/Documentation/Images/ExoplanetWatch.png)
 
 Contribute to [Exoplanet Watch](https://exoplanets.nasa.gov/exoplanet-watch/about-exoplanet-watch/), a citizen science project that improves the properties of exoplanets and their orbits using observations processed with EXOTIC. Register with [AAVSO](https://www.aavso.org/exoplanet-section) and input your Observer Code to help track your contributions allowing for proper credit on future publications using those measurements. Ask about our Exoplanet Watch Slack Channel!
+
+## Acknowledgements 
+Exoplanet Watch is a project by NASA's Universe of Learning. NASA's Universe of Learning materials are based upon work supported by NASA under award number NNX16AC65A to the Space Telescope Science Institute, working in partnership with Caltech/IPAC, Center for Astrophysics | Harvard & Smithsonian, Jet Propulsion Laboratory, and Sonoma State University.
